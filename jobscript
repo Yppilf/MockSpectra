@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=0
+#SBATCH --job-name=datacube-generator
+#SBATCH --time=2-12:00:00
+
+
+module purge
+module load Python
+
+srun pip install -r requirements.txt
+srun python my_datacube.py

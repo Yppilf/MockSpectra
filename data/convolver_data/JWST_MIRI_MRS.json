@@ -1,0 +1,86 @@
+[
+    { 
+        "channel_name": "CH1A",
+        "wavelength_lower": 4.90,
+        "wavelength_upper": 5.74,
+        "resolving_power_lower": 3320,
+        "resolving_power_upper": 3710
+    },
+    { 
+        "channel_name": "CH1B",
+        "wavelength_lower": 5.66,
+        "wavelength_upper": 6.63,
+        "resolving_power_lower": 3190,
+        "resolving_power_upper": 3750
+    },
+    { 
+        "channel_name": "CH1C",
+        "wavelength_lower": 6.53,
+        "wavelength_upper": 7.65,
+        "resolving_power_lower": 3100,
+        "resolving_power_upper": 3610
+    },
+    { 
+        "channel_name": "CH2A",
+        "wavelength_lower": 7.51,
+        "wavelength_upper": 8.77,
+        "resolving_power_lower": 2990,
+        "resolving_power_upper": 3110
+    },
+    { 
+        "channel_name": "CH2B",
+        "wavelength_lower": 8.67,
+        "wavelength_upper": 10.13,
+        "resolving_power_lower": 2750,
+        "resolving_power_upper": 3170
+    },
+    { 
+        "channel_name": "CH2C",
+        "wavelength_lower": 10.01,
+        "wavelength_upper": 11.70,
+        "resolving_power_lower": 2860,
+        "resolving_power_upper": 3300
+    },
+    { 
+        "channel_name": "CH3A",
+        "wavelength_lower": 11.55,
+        "wavelength_upper": 13.47,
+        "resolving_power_lower": 2530,
+        "resolving_power_upper": 2880
+    },
+    { 
+        "channel_name": "CH3B",
+        "wavelength_lower": 13.34,
+        "wavelength_upper": 15.57,
+        "resolving_power_lower": 1790,
+        "resolving_power_upper": 2640
+    },
+    { 
+        "channel_name": "CH3C",
+        "wavelength_lower": 15.41,
+        "wavelength_upper": 17.98,
+        "resolving_power_lower": 1980,
+        "resolving_power_upper": 2790
+    },
+    { 
+        "channel_name": "CH4A",
+        "wavelength_lower": 17.70,
+        "wavelength_upper": 20.95,
+        "resolving_power_lower": 1460,
+        "resolving_power_upper": 1930
+    },
+    { 
+        "channel_name": "CH4B",
+        "wavelength_lower": 20.69,
+        "wavelength_upper": 24.48,
+        "resolving_power_lower": 1680,
+        "resolving_power_upper": 1770
+    },
+    { 
+        "channel_name": "CH4C",
+        "wavelength_lower": 24.40,
+        "wavelength_upper": 27.90,
+        "resolving_power_lower": 1330,
+        "resolving_power_upper": 1630
+    }
+]
