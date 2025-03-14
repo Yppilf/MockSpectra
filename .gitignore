@@ -1,0 +1,6 @@
+__pycache__
+*.h5
+*.out
+testPermutationFile.py
+my_datacube.py
+test_viz.py

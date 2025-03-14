@@ -3,7 +3,9 @@ from matplotlib.pyplot import figure,show
 from debrisDisk import DebrisDisk
 from slabModel import SlabModel
 from convolver import Convolver
+from dataCube import DataCube
 import matplotlib.pyplot as plt
+import h5py
 
 class Visualization:
     def __init__(self):
@@ -131,4 +133,66 @@ class Visualization:
         # Adjust layout to prevent overlapping labels
         fig.tight_layout()
         plt.subplots_adjust(left=0.05, right=0.85)
+        fig.savefig(output_file)
+
+    def plotParameterSpace(self, data_cube : DataCube, output_file : str, num_bins : int = 30) -> None:
+        """
+        Reads the HDF5 file and plots the parameter space distribution as scatter plots.
+
+        Parameters:
+        - hdf5_file (str): Path to the HDF5 file containing permutations.
+        - num_bins (int): Number of bins to use for histogram computation.
+        
+        Returns:
+        - None (Displays the plot)
+        """
+        # Load data from HDF5
+        if not data_cube.permutations_file:
+            print("No permutation file found")
+            return None
+        
+        with h5py.File(data_cube.permutations_file, "r") as hdf:
+            permutations_group = hdf["permutations"]
+            data = np.array([permutations_group[key][:] for key in permutations_group.keys()])
+
+        num_molecules = (data.shape[1] - 1) // 3  # Number of species (excluding distance)
+
+        # Extract temperature, density, and radius values per species
+        temperatures = [data[:, i] for i in range(num_molecules)]
+        densities = [np.log10(data[:, i + num_molecules]) for i in range(num_molecules)]
+        radii = [data[:, i + 2 * num_molecules] for i in range(num_molecules)]
+
+        # Define global x-axis ranges (min-max across all species)
+        temp_range = (min(map(np.min, temperatures)), max(map(np.max, temperatures)))
+        dens_range = (min(map(np.min, densities)), max(map(np.max, densities)))
+        radii_range = (min(map(np.min, radii)), max(map(np.max, radii)))
+
+        # Create the plot
+        fig = figure(figsize=(15,8))
+        frame = fig.subplots(1, 3)
+        molNames = [mol["molecule"].molecule for mol in data_cube.molecules]
+        param_names = ["Temperature (K)", "Column Density (log10 cm⁻²)", "Emitting Radius (AU)"]
+        param_data = [temperatures, densities, radii]
+        param_ranges = [temp_range, dens_range, radii_range]
+        colors = plt.cm.rainbow(np.linspace(0, 1, num_molecules))
+
+        for i in range(len(param_names)):
+            ax = frame[i]
+            param_name = param_names[i]
+            param_values = param_data[i]
+            param_range = param_ranges[i]
+
+            bins = np.linspace(param_range[0], param_range[1], num_bins)
+
+            for i, values in enumerate(param_values):
+                hist, bin_edges = np.histogram(values, bins=bins)
+                bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+                ax.plot(bin_centers, hist, color=colors[i], label=molNames[i])
+
+            ax.set_xlabel(param_name)
+            ax.legend()
+
+        fig.supylabel("Counts")
+        fig.suptitle("Parameter space coverage")
+        fig.tight_layout()
         fig.savefig(output_file)

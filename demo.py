@@ -1,12 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from convolver import Convolver
 from molecule import Molecule
 from debrisDisk import DebrisDisk
 from slabModel import SlabModel
 from visualization import Visualization
 import os
-from matplotlib.pyplot import figure,show
 
 # This script is for showing the functionalities of the module applied on an example case.
 # Because of usage on the cluster, the images are not shown directly but saved to the ./demo folder.

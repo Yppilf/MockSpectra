@@ -3,6 +3,4 @@ scipy
 molmass
 prodimopy
 tqdm
-itertools
 h5py
-functools

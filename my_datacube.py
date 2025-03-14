@@ -4,11 +4,11 @@ from debrisDisk import DebrisDisk
 from dataCube import DataCube  # Ensure this imports your DataCube class
 
 # Define test parameters
-output_file = "dataset_permutations.h5"
+output_file = "full_dataset_permutations.h5"
 output_folder = "/scratch/s4950836/ppd_mockspectra"
 cache_folder = "/scratch/s4950836/ppd_cache"
 num_cores = 16  # Use a small number of cores for testing
-num_samples = 2000
+num_samples = 4096
 
 # Create required components
 convolver = Convolver("./data/convolver_data/JWST_MIRI_MRS.json", wavelength_overlap="minimal", resolving_power="mean")
@@ -86,7 +86,7 @@ datacube.add_molecule(
 
 # Generate permutations and save to file
 print("Generating permutations")
-datacube.latinHypercubeSamplePermutations(output_file, num_samples)
+datacube.sample_lhs(output_file, num_samples)
 
 # Generate the dataset
 print("Generating dataset")

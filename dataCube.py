@@ -7,7 +7,7 @@ import h5py, os, multiprocessing, itertools, random
 from typing import List
 from functools import partial
 from tqdm import tqdm
-from scipy.stats import qmc
+import scipy.stats.qmc as qmc
 
 class DataCube:
     def __init__(self, convolver : Convolver, debris_disk : DebrisDisk, distances : List[float]) -> None:
@@ -75,30 +75,57 @@ class DataCube:
 
         self.permutations_file = output_file
 
-    def latinHypercubeSamplePermutations(self, output_file: str, num_samples: int) -> None:
-        """Latin Hypercube Sampling for diverse coverage."""
+    def sample_lhs(self, output_file: str, num_samples: int) -> None:
+        """Uses Latin Hypercube Sampling to select a subset of parameter combinations.
 
-        num_params = len(self.molecules) * 3 + 1  # (T, N, R) for each molecule + distance
-        sampler = qmc.LatinHypercube(d=num_params)
-        samples = qmc.scale(sampler.random(num_samples), [0] * num_params, [1] * num_params)
+        Parameters:
+        output_file (string)    File in which to store the permutations
+        num_samples (int)       Number of samples to generate.
 
+        Returns:
+        None
+        """
+        num_molecules = len(self.molecules)
+
+        # Define number of dimensions
+        num_dimensions = num_molecules * 3 + 1  # 3 params per molecule + 1 distance
+
+        # Create an LHS sampler
+        sampler = qmc.LatinHypercube(d=num_dimensions)
+        samples = sampler.random(n=num_samples)
+
+        # Initialize lists to store parameter values separately
+        T_samples, N_samples, R_samples, D_samples = [], [], [], []
+
+        # Map samples back to parameter ranges
+        for i in range(num_samples):
+            sample = samples[i]
+            temp_values, dens_values, rad_values = [], [], []
+
+            index = 0
+            for mol in self.molecules:
+                temp_values.append(np.interp(sample[index], [0, 1], [min(mol["temperatures"]), max(mol["temperatures"])]))
+                dens_values.append(np.interp(sample[index+1], [0, 1], [min(mol["densities"]), max(mol["densities"])]))
+                rad_values.append(np.interp(sample[index+2], [0, 1], [min(mol["emitting_radii"]), max(mol["emitting_radii"])]))
+                index += 3
+
+            # Sample a distance
+            D_samples.append(np.interp(sample[index], [0, 1], [min(self.distances), max(self.distances)]))
+
+            # Store in the correct order
+            T_samples.append(temp_values)
+            N_samples.append(dens_values)
+            R_samples.append(rad_values)
+
+        # Stack the arrays to match genPermutations format
+        sampled_permutations = np.hstack((T_samples, N_samples, R_samples, np.array(D_samples).reshape(-1, 1)))
+
+        # Save to HDF5 file in the same structure as genPermutations
         with h5py.File(output_file, "w") as hdf:
             group = hdf.create_group("permutations")
-            dataset = group.create_dataset("data", shape=(num_samples, num_params), dtype=np.float64)
-
-            for i, sample in enumerate(samples):
-                sampled_params = []
-                index = 0
-                for mol in self.molecules:
-                    temp = mol["temperatures"][int(sample[index] * len(mol["temperatures"]))]
-                    density = mol["densities"][int(sample[index + 1] * len(mol["densities"]))]
-                    radius = mol["emitting_radii"][int(sample[index + 2] * len(mol["emitting_radii"]))]
-                    sampled_params.extend([temp, density, radius])
-                    index += 3
-                
-                distance = self.distances[int(sample[-1] * len(self.distances))]
-                sampled_params.append(distance)
-                dataset[i] = np.array(sampled_params, dtype=np.float64)
+            for index, sample in enumerate(sampled_permutations):
+                dataset_name = f"{index}"
+                group.create_dataset(dataset_name, data=np.array(sample, dtype=np.float64))
 
         self.permutations_file = output_file
 

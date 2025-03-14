@@ -25,4 +25,4 @@ In the Visualization class there are methods to plot spectra and the debris disk
 The implementation can be found in visualization.py
 
 ## dataCube.py
-The DataCube class is used to generate a large dataset of slab models with varying parameters. The implementation is found in dataCube.py
+The DataCube class is used to generate a large dataset of slab models with varying parameters. The implementation is found in dataCube.py. We have the options to generate the full permutation list, or to sample N spectra from the parameter space. The sampling only takes into account the minimum and maximum values of the parameter space, not the intermediate values specified. It uses Latin Hypercube Sampling to ensure full parameter space coverage.
